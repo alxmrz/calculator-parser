@@ -1,21 +1,23 @@
 package internal
 
 type Parser struct {
+	multiplier int
 }
 
 type Node struct {
-	value string
-	left  *Node
-	right *Node
-	prev  *Node
+	value  string
+	left   *Node
+	right  *Node
+	prev   *Node
+	weight int
 }
 
 func NewParser() *Parser {
-	return &Parser{}
+	return &Parser{multiplier: 0}
 }
 
 func (p *Parser) buildTree(input string) *Node {
-	root := &Node{}
+	root := &Node{weight: 0}
 	//origin := root
 
 	// lval or rval for calculation
@@ -26,18 +28,28 @@ func (p *Parser) buildTree(input string) *Node {
 
 		if isOperation(tokenString) {
 			if root.right == nil {
-				root.right = &Node{}
+				root.right = &Node{weight: 0}
 			}
 			root.right.value = operand
 			operand = ""
 
-			root = insertOperationNode(tokenString, root)
+			root = p.insertOperationNode(tokenString, root)
 
 			continue
 		}
 
 		// skip spaces
 		if tokenString == " " {
+			continue
+		}
+
+		if tokenString == ")" {
+			p.multiplier += 100
+			continue
+		}
+
+		if tokenString == "(" {
+			p.multiplier -= 100
 			continue
 		}
 
@@ -61,13 +73,14 @@ func (p *Parser) buildTree(input string) *Node {
 }
 
 // 2 + 2 * 3
-func insertOperationNode(operation string, root *Node) *Node {
-	if root.prev != nil && getWeight(operation) <= getWeight(root.prev.value) {
-		return insertOperationNode(operation, root.prev)
+func (p *Parser) insertOperationNode(operation string, root *Node) *Node {
+	if root.prev != nil && p.getWeight(operation) <= root.prev.weight {
+		return p.insertOperationNode(operation, root.prev)
 	}
 
 	if root.value == "" {
 		root.value = operation
+		root.weight = p.getWeight(operation)
 		root.left = &Node{
 			prev: root,
 		}
@@ -75,11 +88,12 @@ func insertOperationNode(operation string, root *Node) *Node {
 		return root.left
 	}
 
-	if root.prev == nil && getWeight(operation) <= getWeight(root.value) {
+	if root.prev == nil && p.getWeight(operation) <= root.weight {
 
 		root.prev = &Node{
-			right: root,
-			value: operation,
+			right:  root,
+			value:  operation,
+			weight: p.getWeight(operation),
 		}
 
 		root.prev.left = &Node{
@@ -89,55 +103,32 @@ func insertOperationNode(operation string, root *Node) *Node {
 		return root.prev.left
 	}
 
-	return nil
-}
-
-func (p *Parser) buildTree1(input string) *Node {
-	root := &Node{}
-	origin := root
-
-	for i := len(input) - 1; i >= 0; i-- {
-		tokenString := string(input[i])
-		if isOperation(tokenString) {
-			root.value = tokenString
-			root.left = &Node{}
-			root.prev = root
-			root = root.left
-			continue
-		}
-
-		// skip spaces
-		if tokenString == " " {
-			continue
-		}
-
-		if root.value == "" {
-			if root.right == nil {
-				root.right = &Node{}
-			}
-
-			root.right.value = tokenString + root.right.value
-			continue
-		}
-
-		if root.left == nil {
-			root.left = &Node{}
-		}
-
-		root.left.value = tokenString + root.left.value
+	if p.getWeight(operation) <= root.weight {
 	}
 
-	return origin
+	newNode := &Node{
+		prev:   root.prev,
+		right:  root,
+		value:  operation,
+		weight: p.getWeight(operation),
+		left:   &Node{},
+	}
+
+	root.prev.left = newNode
+
+	newNode.left.prev = newNode
+
+	return newNode.left
 }
 
-func getWeight(operation string) int {
+func (p *Parser) getWeight(operation string) int {
 	switch operation {
 	case "+":
-		return 10
+		return 10 + p.multiplier
 	case "-":
-		return 15
+		return 15 + p.multiplier
 	case "*", "/":
-		return 20
+		return 20 + p.multiplier
 	default:
 		return 0
 	}

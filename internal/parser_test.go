@@ -114,6 +114,30 @@ func TestSortTreeByOrder(t *testing.T) {
 	assert.True(t, AreTreesEqual(expected, actual))
 }
 
+func TestBuildTreeWithCustomOrder(t *testing.T) {
+	parser := NewParser()
+
+	expected := &Node{
+		value: "*",
+		left: &Node{
+			value: "+",
+			left: &Node{
+				value: "2",
+			},
+			right: &Node{
+				value: "3",
+			},
+		},
+		right: &Node{
+			value: "4",
+		},
+	}
+
+	actual := parser.buildTree("(2 + 3) * 4")
+
+	assert.True(t, AreTreesEqual(expected, actual))
+}
+
 func AreTreesEqual(t1 *Node, t2 *Node) bool {
 	if t1 == nil && t2 != nil || t2 == nil && t1 != nil {
 		return false

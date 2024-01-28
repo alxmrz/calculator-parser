@@ -56,7 +56,7 @@ func (c *Calculator) calculate(lval, rval int, operation rune) int {
 	case '/':
 		return lval / rval
 	default:
-		log.Fatal("Unknown operation ", operation)
+		log.Fatal("Unknown operation ", string(operation))
 	}
 
 	return 0
