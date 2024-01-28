@@ -13,7 +13,7 @@ func NewParser() *Parser {
 	return &Parser{}
 }
 
-// (0+1) + 1
+// 1 + 1 * 2
 func (p *Parser) Parse(input string) (int, error) {
 	result := 0
 	currentOperation := '+'
@@ -22,7 +22,7 @@ func (p *Parser) Parse(input string) (int, error) {
 	for _, token := range input {
 
 		switch token {
-		case '+':
+		case '+', '-':
 			tmp, err := strconv.Atoi(currentValue)
 			if err != nil {
 				return 0, errors.New("can't atoi")
@@ -31,18 +31,7 @@ func (p *Parser) Parse(input string) (int, error) {
 			result = p.calculate(result, tmp, currentOperation)
 
 			currentValue = ""
-			currentOperation = '+'
-			break
-		case '-':
-			tmp, err := strconv.Atoi(currentValue)
-			if err != nil {
-				return 0, errors.New("can't atoi")
-			}
-
-			result = p.calculate(result, tmp, currentOperation)
-
-			currentValue = ""
-			currentOperation = '-'
+			currentOperation = token
 			break
 		case ' ':
 			break
