@@ -1,11 +1,5 @@
 package internal
 
-import (
-	"errors"
-	"log"
-	"strconv"
-)
-
 type Parser struct {
 }
 
@@ -13,65 +7,11 @@ type Node struct {
 	value string
 	left  *Node
 	right *Node
+	prev  *Node
 }
 
 func NewParser() *Parser {
 	return &Parser{}
-}
-
-// 1 + 1 * 2
-func (p *Parser) Parse(input string) (int, error) {
-	result := 0
-	currentOperation := '+'
-
-	var currentValue string
-	for _, token := range input {
-
-		switch token {
-		case '+', '-':
-			tmp, err := strconv.Atoi(currentValue)
-			if err != nil {
-				return 0, errors.New("can't atoi")
-			}
-
-			result = p.calculate(result, tmp, currentOperation)
-
-			currentValue = ""
-			currentOperation = token
-			break
-		case ' ':
-			break
-		default:
-			currentValue += string(token)
-		}
-
-	}
-
-	tmp, err := strconv.Atoi(currentValue)
-	if err != nil {
-		return 0, errors.New("dsfdf")
-	}
-
-	result = p.calculate(result, tmp, currentOperation)
-
-	return result, nil
-}
-
-func (p *Parser) calculate(lval, rval int, operation rune) int {
-	switch operation {
-	case '+':
-		return lval + rval
-	case '-':
-		return lval - rval
-	case '*':
-		return lval * rval
-	case '/':
-		return lval / rval
-	default:
-		log.Fatal("Unknown operation ", operation)
-	}
-
-	return 0
 }
 
 func (p *Parser) buildTree(input string) *Node {
@@ -83,6 +23,7 @@ func (p *Parser) buildTree(input string) *Node {
 		if isOperation(tokenString) {
 			root.value = tokenString
 			root.left = &Node{}
+			root.prev = root
 			root = root.left
 			continue
 		}
@@ -111,17 +52,15 @@ func (p *Parser) buildTree(input string) *Node {
 	return origin
 }
 
-func (p *Parser) CalculateOverTree(tree *Node) int {
-	right, err := strconv.Atoi(tree.right.value)
-	if err != nil {
-		log.Fatal(err)
+func getWeight(operation string) int {
+	switch operation {
+	case "+", "-":
+		return 10
+	case "*", "/":
+		return 20
+	default:
+		return 0
 	}
-
-	if tree.left == nil {
-		return right
-	}
-
-	return p.calculate(p.CalculateOverTree(tree.left), right, rune(tree.value[0]))
 }
 
 func isOperation(operation string) bool {

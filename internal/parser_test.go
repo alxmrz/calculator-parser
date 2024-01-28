@@ -5,29 +5,6 @@ import (
 	"testing"
 )
 
-func TestParse(t *testing.T) {
-	tests := []struct {
-		Expected int
-		Input    string
-	}{
-		{2, "1 + 1"},
-		{4, "3 + 1"},
-		{55, "30 + 25"},
-		{0, "1 - 1"},
-		{9, "20 - 11"},
-		{12, "10 + 5 - 3"},
-		{8, "10 - 5 + 3"},
-	}
-
-	parser := NewParser()
-
-	for _, test := range tests {
-		actual, err := parser.Parse(test.Input)
-		assert.NoError(t, err)
-		assert.Equal(t, test.Expected, actual)
-	}
-}
-
 func TestBuildTreeWithPluses(t *testing.T) {
 	parser := NewParser()
 
@@ -50,7 +27,7 @@ func TestBuildTreeWithPluses(t *testing.T) {
 	}
 	actual := parser.buildTree("1 + 1 + 2")
 
-	assert.Equal(t, expected, actual)
+	assert.True(t, AreTreesEqual(expected, actual))
 }
 
 func TestBuildTreeWithPlusesAndMultiValues(t *testing.T) {
@@ -75,7 +52,7 @@ func TestBuildTreeWithPlusesAndMultiValues(t *testing.T) {
 	}
 	actual := parser.buildTree("10 + 15 + 20")
 
-	assert.Equal(t, expected, actual)
+	assert.True(t, AreTreesEqual(expected, actual))
 }
 
 func TestBuildTreeWithMultipliers(t *testing.T) {
@@ -93,8 +70,7 @@ func TestBuildTreeWithMultipliers(t *testing.T) {
 		},
 	}
 	actual := parser.buildTree("5 * 5")
-
-	assert.Equal(t, expected, actual)
+	assert.True(t, AreTreesEqual(expected, actual))
 }
 
 func TestBuildTreeWithDivisionsMultipliers(t *testing.T) {
@@ -113,10 +89,10 @@ func TestBuildTreeWithDivisionsMultipliers(t *testing.T) {
 	}
 	actual := parser.buildTree("5 / 5")
 
-	assert.Equal(t, expected, actual)
+	assert.True(t, AreTreesEqual(expected, actual))
 }
 
-func _TestSortTreeByOrder(t *testing.T) {
+func TestSortTreeByOrder(t *testing.T) {
 	parser := NewParser()
 
 	expected := &Node{
@@ -139,101 +115,21 @@ func _TestSortTreeByOrder(t *testing.T) {
 
 	actual := parser.buildTree("2 + 5 * 5")
 
-	assert.Equal(t, expected, actual)
+	assert.True(t, AreTreesEqual(expected, actual))
 }
 
-func TestCalculateOverTree(t *testing.T) {
-	parser := NewParser()
-
-	tree := &Node{
-		value: "+",
-		left: &Node{
-			value: "+",
-			left: &Node{
-				right: &Node{
-					value: "10",
-				},
-			},
-			right: &Node{
-				value: "15",
-			},
-		},
-		right: &Node{
-			value: "20",
-		},
+func AreTreesEqual(t1 *Node, t2 *Node) bool {
+	if t1 == nil && t2 != nil || t2 == nil && t1 != nil {
+		return false
 	}
 
-	expected := 45
-	actual := parser.CalculateOverTree(tree)
-
-	assert.Equal(t, expected, actual)
-}
-
-func TestCalculateOverTreeDifferentOperations(t *testing.T) {
-	parser := NewParser()
-
-	tree := &Node{
-		value: "+",
-		left: &Node{
-			value: "-",
-			left: &Node{
-				right: &Node{
-					value: "10",
-				},
-			},
-			right: &Node{
-				value: "15",
-			},
-		},
-		right: &Node{
-			value: "20",
-		},
+	if t1 == nil && t2 == nil {
+		return true
 	}
 
-	expected := 15
-	actual := parser.CalculateOverTree(tree)
-
-	assert.Equal(t, expected, actual)
-}
-
-func TestCalculateOverTreeMultipliers(t *testing.T) {
-	parser := NewParser()
-
-	tree := &Node{
-		value: "*",
-		left: &Node{
-			right: &Node{
-				value: "5",
-			},
-		},
-		right: &Node{
-			value: "5",
-		},
+	if t1.value != t2.value {
+		return false
 	}
 
-	expected := 25
-	actual := parser.CalculateOverTree(tree)
-
-	assert.Equal(t, expected, actual)
-}
-
-func TestCalculateOverTreeDivisions(t *testing.T) {
-	parser := NewParser()
-
-	tree := &Node{
-		value: "/",
-		left: &Node{
-			right: &Node{
-				value: "5",
-			},
-		},
-		right: &Node{
-			value: "5",
-		},
-	}
-
-	expected := 1
-	actual := parser.CalculateOverTree(tree)
-
-	assert.Equal(t, expected, actual)
+	return AreTreesEqual(t1.left, t2.left) && AreTreesEqual(t1.right, t2.right)
 }

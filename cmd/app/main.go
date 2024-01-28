@@ -14,12 +14,9 @@ func main() {
 	}
 
 	input := strings.Join(os.Args[1:], "")
-	parser := internal.NewParser()
+	calculator := internal.NewCalculator(internal.NewParser())
 
-	result, err := parser.Parse(input)
-	if err != nil {
-		log.Fatal(err)
-	}
+	result := calculator.Calculate(input)
 
 	fmt.Printf("Result: %d", result)
 }
