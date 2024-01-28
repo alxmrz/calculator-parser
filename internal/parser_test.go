@@ -78,6 +78,70 @@ func TestBuildTreeWithPlusesAndMultiValues(t *testing.T) {
 	assert.Equal(t, expected, actual)
 }
 
+func TestBuildTreeWithMultipliers(t *testing.T) {
+	parser := NewParser()
+
+	expected := &Node{
+		value: "*",
+		left: &Node{
+			right: &Node{
+				value: "5",
+			},
+		},
+		right: &Node{
+			value: "5",
+		},
+	}
+	actual := parser.buildTree("5 * 5")
+
+	assert.Equal(t, expected, actual)
+}
+
+func TestBuildTreeWithDivisionsMultipliers(t *testing.T) {
+	parser := NewParser()
+
+	expected := &Node{
+		value: "/",
+		left: &Node{
+			right: &Node{
+				value: "5",
+			},
+		},
+		right: &Node{
+			value: "5",
+		},
+	}
+	actual := parser.buildTree("5 / 5")
+
+	assert.Equal(t, expected, actual)
+}
+
+func _TestSortTreeByOrder(t *testing.T) {
+	parser := NewParser()
+
+	expected := &Node{
+		value: "+",
+		left: &Node{
+			value: "*",
+			left: &Node{
+				right: &Node{
+					value: "5",
+				},
+			},
+			right: &Node{
+				value: "5",
+			},
+		},
+		right: &Node{
+			value: "2",
+		},
+	}
+
+	actual := parser.buildTree("2 + 5 * 5")
+
+	assert.Equal(t, expected, actual)
+}
+
 func TestCalculateOverTree(t *testing.T) {
 	parser := NewParser()
 
@@ -127,6 +191,48 @@ func TestCalculateOverTreeDifferentOperations(t *testing.T) {
 	}
 
 	expected := 15
+	actual := parser.CalculateOverTree(tree)
+
+	assert.Equal(t, expected, actual)
+}
+
+func TestCalculateOverTreeMultipliers(t *testing.T) {
+	parser := NewParser()
+
+	tree := &Node{
+		value: "*",
+		left: &Node{
+			right: &Node{
+				value: "5",
+			},
+		},
+		right: &Node{
+			value: "5",
+		},
+	}
+
+	expected := 25
+	actual := parser.CalculateOverTree(tree)
+
+	assert.Equal(t, expected, actual)
+}
+
+func TestCalculateOverTreeDivisions(t *testing.T) {
+	parser := NewParser()
+
+	tree := &Node{
+		value: "/",
+		left: &Node{
+			right: &Node{
+				value: "5",
+			},
+		},
+		right: &Node{
+			value: "5",
+		},
+	}
+
+	expected := 1
 	actual := parser.CalculateOverTree(tree)
 
 	assert.Equal(t, expected, actual)

@@ -63,6 +63,10 @@ func (p *Parser) calculate(lval, rval int, operation rune) int {
 		return lval + rval
 	case '-':
 		return lval - rval
+	case '*':
+		return lval * rval
+	case '/':
+		return lval / rval
 	default:
 		log.Fatal("Unknown operation ", operation)
 	}
@@ -122,7 +126,7 @@ func (p *Parser) CalculateOverTree(tree *Node) int {
 
 func isOperation(operation string) bool {
 	switch operation {
-	case "+", "-":
+	case "+", "-", "*", "/":
 		return true
 	default:
 		return false
