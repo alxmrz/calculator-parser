@@ -16,16 +16,33 @@ func NewCalculator(parser *Parser) *Calculator {
 }
 
 func (c *Calculator) CalculateOverTree(tree *Node) int {
-	right, err := strconv.Atoi(tree.right.value)
-	if err != nil {
-		log.Fatal(err)
+	if tree.left == nil && tree.right != nil {
+		val, err := strconv.Atoi(tree.right.value)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		return val
+	}
+	if tree.left != nil && tree.right == nil {
+		val, err := strconv.Atoi(tree.left.value)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		return val
 	}
 
-	if tree.left == nil {
-		return right
+	if tree.left == nil && tree.right == nil {
+		val, err := strconv.Atoi(tree.value)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		return val
 	}
 
-	return c.calculate(c.CalculateOverTree(tree.left), right, rune(tree.value[0]))
+	return c.calculate(c.CalculateOverTree(tree.left), c.CalculateOverTree(tree.right), rune(tree.value[0]))
 }
 
 func (c *Calculator) calculate(lval, rval int, operation rune) int {

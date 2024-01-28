@@ -10,7 +10,7 @@ func TestBuildTreeWithPluses(t *testing.T) {
 
 	expected := &Node{
 		value: "+",
-		left: &Node{
+		right: &Node{
 			value: "+",
 			left: &Node{
 				right: &Node{
@@ -18,11 +18,11 @@ func TestBuildTreeWithPluses(t *testing.T) {
 				},
 			},
 			right: &Node{
-				value: "1",
+				value: "2",
 			},
 		},
-		right: &Node{
-			value: "2",
+		left: &Node{
+			value: "1",
 		},
 	}
 	actual := parser.buildTree("1 + 1 + 2")
@@ -35,19 +35,19 @@ func TestBuildTreeWithPlusesAndMultiValues(t *testing.T) {
 
 	expected := &Node{
 		value: "+",
-		left: &Node{
+		right: &Node{
 			value: "+",
 			left: &Node{
 				right: &Node{
-					value: "10",
+					value: "15",
 				},
 			},
 			right: &Node{
-				value: "15",
+				value: "20",
 			},
 		},
-		right: &Node{
-			value: "20",
+		left: &Node{
+			value: "10",
 		},
 	}
 	actual := parser.buildTree("10 + 15 + 20")
@@ -61,9 +61,7 @@ func TestBuildTreeWithMultipliers(t *testing.T) {
 	expected := &Node{
 		value: "*",
 		left: &Node{
-			right: &Node{
-				value: "5",
-			},
+			value: "5",
 		},
 		right: &Node{
 			value: "5",
@@ -79,9 +77,7 @@ func TestBuildTreeWithDivisionsMultipliers(t *testing.T) {
 	expected := &Node{
 		value: "/",
 		left: &Node{
-			right: &Node{
-				value: "5",
-			},
+			value: "5",
 		},
 		right: &Node{
 			value: "5",
@@ -97,7 +93,7 @@ func TestSortTreeByOrder(t *testing.T) {
 
 	expected := &Node{
 		value: "+",
-		left: &Node{
+		right: &Node{
 			value: "*",
 			left: &Node{
 				right: &Node{
@@ -108,7 +104,7 @@ func TestSortTreeByOrder(t *testing.T) {
 				value: "5",
 			},
 		},
-		right: &Node{
+		left: &Node{
 			value: "2",
 		},
 	}
