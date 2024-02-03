@@ -31,6 +31,7 @@ func TestCalculate(t *testing.T) {
 		{9, "5 + 20 * 2 / 10"},
 		{1, "0.5 + 0.5"},
 		{0.9, "0.5 + 0.4"},
+		{25, "5 * 5"},
 	}
 
 	calculator := NewCalculator(NewParser())

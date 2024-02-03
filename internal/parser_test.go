@@ -25,7 +25,7 @@ func TestBuildTreeWithPluses(t *testing.T) {
 			value: "1",
 		},
 	}
-	actual := parser.buildTree("1 + 1 + 2")
+	actual, _ := parser.buildTree("1 + 1 + 2")
 
 	assert.True(t, AreTreesEqual(expected, actual))
 }
@@ -50,7 +50,7 @@ func TestBuildTreeWithPlusesAndMultiValues(t *testing.T) {
 			value: "10",
 		},
 	}
-	actual := parser.buildTree("10 + 15 + 20")
+	actual, _ := parser.buildTree("10 + 15 + 20")
 
 	assert.True(t, AreTreesEqual(expected, actual))
 }
@@ -67,7 +67,7 @@ func TestBuildTreeWithMultipliers(t *testing.T) {
 			value: "5",
 		},
 	}
-	actual := parser.buildTree("5 * 5")
+	actual, _ := parser.buildTree("5 * 5")
 	assert.True(t, AreTreesEqual(expected, actual))
 }
 
@@ -83,7 +83,7 @@ func TestBuildTreeWithDivisionsMultipliers(t *testing.T) {
 			value: "5",
 		},
 	}
-	actual := parser.buildTree("5 / 5")
+	actual, _ := parser.buildTree("5 / 5")
 
 	assert.True(t, AreTreesEqual(expected, actual))
 }
@@ -109,7 +109,7 @@ func TestSortTreeByOrder(t *testing.T) {
 		},
 	}
 
-	actual := parser.buildTree("2 + 5 * 5")
+	actual, _ := parser.buildTree("2 + 5 * 5")
 
 	assert.True(t, AreTreesEqual(expected, actual))
 }
@@ -133,9 +133,26 @@ func TestBuildTreeWithCustomOrder(t *testing.T) {
 		},
 	}
 
-	actual := parser.buildTree("(2 + 3) * 4")
+	actual, _ := parser.buildTree("(2 + 3) * 4")
 
 	assert.True(t, AreTreesEqual(expected, actual))
+}
+
+func TestBuildTreeReturnErrorOnWrongSyntax(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected string
+	}{
+		{"5 +", "right operand is not specified for operation +"},
+	}
+
+	parser := NewParser()
+
+	for _, test := range tests {
+		_, err := parser.buildTree(test.input)
+
+		assert.ErrorContains(t, err, test.expected)
+	}
 }
 
 func AreTreesEqual(t1 *Node, t2 *Node) bool {
@@ -143,7 +160,7 @@ func AreTreesEqual(t1 *Node, t2 *Node) bool {
 		return false
 	}
 
-	if t1 == nil && t2 == nil {
+	if t1 == nil {
 		return true
 	}
 

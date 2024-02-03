@@ -74,5 +74,10 @@ func (c *Calculator) calculate(lval, rval float64, operation string) (float64, e
 }
 
 func (c *Calculator) Calculate(input string) (float64, error) {
-	return c.CalculateOverTree(c.parser.buildTree(input))
+	tree, err := c.parser.buildTree(input)
+	if err != nil {
+		return 0.0, err
+	}
+
+	return c.CalculateOverTree(tree)
 }

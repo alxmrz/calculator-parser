@@ -1,5 +1,7 @@
 package internal
 
+import "errors"
+
 type Parser struct {
 	multiplier int
 }
@@ -16,7 +18,7 @@ func NewParser() *Parser {
 	return &Parser{multiplier: 0}
 }
 
-func (p *Parser) buildTree(input string) *Node {
+func (p *Parser) buildTree(input string) (*Node, error) {
 	root := &Node{weight: 0}
 
 	// lval or rval for calculation
@@ -27,6 +29,9 @@ func (p *Parser) buildTree(input string) *Node {
 		tokenString := string(input[i])
 
 		if isOperation(tokenString) {
+			if len(operand) == 0 {
+				return nil, errors.New("right operand is not specified for operation " + tokenString)
+			}
 			if root.right == nil {
 				root.right = &Node{weight: 0}
 			}
@@ -68,7 +73,7 @@ func (p *Parser) buildTree(input string) *Node {
 		root = root.prev
 	}
 
-	return origin
+	return origin, nil
 }
 
 func (p *Parser) insertOperationNode(operation string, root *Node) *Node {

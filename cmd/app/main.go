@@ -5,15 +5,14 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"strings"
 )
 
 func main() {
 	if len(os.Args) < 2 {
-		log.Fatal("Usage ./calc 5 + 5 - 1")
+		log.Fatal("Usage ./calc \"5 + 5 - 1\"")
 	}
 
-	input := strings.Join(os.Args[1:], "")
+	input := os.Args[1]
 	calculator := internal.NewCalculator(internal.NewParser())
 
 	result, err := calculator.Calculate(input)
