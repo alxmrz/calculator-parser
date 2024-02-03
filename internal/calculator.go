@@ -42,21 +42,21 @@ func (c *Calculator) CalculateOverTree(tree *Node) float64 {
 		return val
 	}
 
-	return c.calculate(c.CalculateOverTree(tree.left), c.CalculateOverTree(tree.right), rune(tree.value[0]))
+	return c.calculate(c.CalculateOverTree(tree.left), c.CalculateOverTree(tree.right), tree.value)
 }
 
-func (c *Calculator) calculate(lval, rval float64, operation rune) float64 {
+func (c *Calculator) calculate(lval, rval float64, operation string) float64 {
 	switch operation {
-	case '+':
+	case "+":
 		return lval + rval
-	case '-':
+	case "-":
 		return lval - rval
-	case '*':
+	case "*":
 		return lval * rval
-	case '/':
+	case "/":
 		return lval / rval
 	default:
-		log.Fatal("Unknown operation ", string(operation))
+		log.Fatal("Unknown operation ", operation)
 	}
 
 	return 0
