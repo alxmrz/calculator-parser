@@ -16,7 +16,10 @@ func main() {
 	input := strings.Join(os.Args[1:], "")
 	calculator := internal.NewCalculator(internal.NewParser())
 
-	result := calculator.Calculate(input)
+	result, err := calculator.Calculate(input)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	fmt.Printf("Result: %.2f", result)
 }

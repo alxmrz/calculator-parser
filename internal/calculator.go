@@ -1,7 +1,7 @@
 package internal
 
 import (
-	"log"
+	"errors"
 	"strconv"
 )
 
@@ -15,53 +15,64 @@ func NewCalculator(parser *Parser) *Calculator {
 	}
 }
 
-func (c *Calculator) CalculateOverTree(tree *Node) float64 {
+func (c *Calculator) CalculateOverTree(tree *Node) (float64, error) {
 	if tree.left == nil && tree.right != nil {
 		val, err := strconv.ParseFloat(tree.right.value, 64)
 		if err != nil {
-			log.Fatal(err)
+			return 0.0, err
 		}
 
-		return val
+		return val, nil
 	}
 	if tree.left != nil && tree.right == nil {
 		val, err := strconv.ParseFloat(tree.left.value, 64)
 		if err != nil {
-			log.Fatal(err)
+			return 0.0, err
 		}
 
-		return val
+		return val, nil
 	}
 
 	if tree.left == nil && tree.right == nil {
 		val, err := strconv.ParseFloat(tree.value, 64)
 		if err != nil {
-			log.Fatal(err)
+			return 0.0, err
 		}
 
-		return val
+		return val, nil
 	}
 
-	return c.calculate(c.CalculateOverTree(tree.left), c.CalculateOverTree(tree.right), tree.value)
+	left, err := c.CalculateOverTree(tree.left)
+	if err != nil {
+		return 0.0, err
+	}
+
+	right, err := c.CalculateOverTree(tree.right)
+	if err != nil {
+		return 0.0, err
+	}
+
+	return c.calculate(left, right, tree.value)
 }
 
-func (c *Calculator) calculate(lval, rval float64, operation string) float64 {
+func (c *Calculator) calculate(lval, rval float64, operation string) (float64, error) {
 	switch operation {
 	case "+":
-		return lval + rval
+		return lval + rval, nil
 	case "-":
-		return lval - rval
+		return lval - rval, nil
 	case "*":
-		return lval * rval
+		return lval * rval, nil
 	case "/":
-		return lval / rval
-	default:
-		log.Fatal("Unknown operation ", operation)
+		if rval == 0 {
+			return 0.0, errors.New("division by zero")
+		}
+		return lval / rval, nil
 	}
 
-	return 0
+	return 0.0, errors.New("Unknown operation " + operation)
 }
 
-func (c *Calculator) Calculate(input string) float64 {
+func (c *Calculator) Calculate(input string) (float64, error) {
 	return c.CalculateOverTree(c.parser.buildTree(input))
 }

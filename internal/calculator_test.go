@@ -36,7 +36,8 @@ func TestCalculate(t *testing.T) {
 	calculator := NewCalculator(NewParser())
 
 	for _, test := range tests {
-		actual := calculator.Calculate(test.Input)
+		actual, err := calculator.Calculate(test.Input)
+		assert.NoError(t, err)
 		assert.Equal(t, test.Expected, actual)
 	}
 }
@@ -62,9 +63,10 @@ func TestCalculateOverTree(t *testing.T) {
 		},
 	}
 
-	expected := 45
-	actual := calculator.CalculateOverTree(tree)
+	expected := 45.0
+	actual, err := calculator.CalculateOverTree(tree)
 
+	assert.NoError(t, err)
 	assert.Equal(t, expected, actual)
 }
 
@@ -89,9 +91,10 @@ func TestCalculateOverTreeDifferentOperations(t *testing.T) {
 		},
 	}
 
-	expected := 15
-	actual := calculator.CalculateOverTree(tree)
+	expected := 15.0
+	actual, err := calculator.CalculateOverTree(tree)
 
+	assert.NoError(t, err)
 	assert.Equal(t, expected, actual)
 }
 
@@ -110,9 +113,10 @@ func TestCalculateOverTreeMultipliers(t *testing.T) {
 		},
 	}
 
-	expected := 25
-	actual := calculator.CalculateOverTree(tree)
+	expected := 25.0
+	actual, err := calculator.CalculateOverTree(tree)
 
+	assert.NoError(t, err)
 	assert.Equal(t, expected, actual)
 }
 
@@ -131,8 +135,9 @@ func TestCalculateOverTreeDivisions(t *testing.T) {
 		},
 	}
 
-	expected := 1
-	actual := calculator.CalculateOverTree(tree)
+	expected := 1.0
+	actual, err := calculator.CalculateOverTree(tree)
 
+	assert.NoError(t, err)
 	assert.Equal(t, expected, actual)
 }
