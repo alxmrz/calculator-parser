@@ -18,5 +18,5 @@ func main() {
 
 	result := calculator.Calculate(input)
 
-	fmt.Printf("Result: %d", result)
+	fmt.Printf("Result: %.2f", result)
 }

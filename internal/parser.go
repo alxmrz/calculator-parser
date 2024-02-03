@@ -18,11 +18,11 @@ func NewParser() *Parser {
 
 func (p *Parser) buildTree(input string) *Node {
 	root := &Node{weight: 0}
-	//origin := root
 
 	// lval or rval for calculation
 	operand := ""
 
+	//Historically I started the parsing from right to left so let it be
 	for i := len(input) - 1; i >= 0; i-- {
 		tokenString := string(input[i])
 
@@ -56,7 +56,6 @@ func (p *Parser) buildTree(input string) *Node {
 		operand = tokenString + operand
 	}
 
-	//root.right = &Node{value: operand}
 	root.value = operand
 
 	var origin *Node
@@ -72,7 +71,6 @@ func (p *Parser) buildTree(input string) *Node {
 	return origin
 }
 
-// 2 + 2 * 3
 func (p *Parser) insertOperationNode(operation string, root *Node) *Node {
 	if root.prev != nil && p.getWeight(operation) <= root.prev.weight {
 		return p.insertOperationNode(operation, root.prev)

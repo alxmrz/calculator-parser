@@ -15,9 +15,9 @@ func NewCalculator(parser *Parser) *Calculator {
 	}
 }
 
-func (c *Calculator) CalculateOverTree(tree *Node) int {
+func (c *Calculator) CalculateOverTree(tree *Node) float64 {
 	if tree.left == nil && tree.right != nil {
-		val, err := strconv.Atoi(tree.right.value)
+		val, err := strconv.ParseFloat(tree.right.value, 64)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -25,7 +25,7 @@ func (c *Calculator) CalculateOverTree(tree *Node) int {
 		return val
 	}
 	if tree.left != nil && tree.right == nil {
-		val, err := strconv.Atoi(tree.left.value)
+		val, err := strconv.ParseFloat(tree.left.value, 64)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -34,7 +34,7 @@ func (c *Calculator) CalculateOverTree(tree *Node) int {
 	}
 
 	if tree.left == nil && tree.right == nil {
-		val, err := strconv.Atoi(tree.value)
+		val, err := strconv.ParseFloat(tree.value, 64)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -45,7 +45,7 @@ func (c *Calculator) CalculateOverTree(tree *Node) int {
 	return c.calculate(c.CalculateOverTree(tree.left), c.CalculateOverTree(tree.right), rune(tree.value[0]))
 }
 
-func (c *Calculator) calculate(lval, rval int, operation rune) int {
+func (c *Calculator) calculate(lval, rval float64, operation rune) float64 {
 	switch operation {
 	case '+':
 		return lval + rval
@@ -62,6 +62,6 @@ func (c *Calculator) calculate(lval, rval int, operation rune) int {
 	return 0
 }
 
-func (c *Calculator) Calculate(input string) int {
+func (c *Calculator) Calculate(input string) float64 {
 	return c.CalculateOverTree(c.parser.buildTree(input))
 }

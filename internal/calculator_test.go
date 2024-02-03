@@ -7,7 +7,7 @@ import (
 
 func TestCalculate(t *testing.T) {
 	tests := []struct {
-		Expected int
+		Expected float64
 		Input    string
 	}{
 		{2, "1 + 1"},
@@ -28,7 +28,9 @@ func TestCalculate(t *testing.T) {
 		{45, "(2+3)*(4+5)"},
 		{95, "5 * ((1+2)*(3+4)) - 10"},
 		{1, "17/(50+(1+2*(3+4+(11-8+(15-4)))*(5-6)+7)+1)"},
-		//{9, "5 + 20 * 2 / 10"}, // TODO: float does not work
+		{9, "5 + 20 * 2 / 10"},
+		{1, "0.5 + 0.5"},
+		{0.9, "0.5 + 0.4"},
 	}
 
 	calculator := NewCalculator(NewParser())
