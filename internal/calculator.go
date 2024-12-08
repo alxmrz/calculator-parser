@@ -56,21 +56,38 @@ func (c *Calculator) CalculateOverTree(tree *Node) (float64, error) {
 }
 
 func (c *Calculator) calculate(lval, rval float64, operation string) (float64, error) {
-	switch operation {
-	case "+":
-		return lval + rval, nil
-	case "-":
-		return lval - rval, nil
-	case "*":
-		return lval * rval, nil
-	case "/":
-		if rval == 0 {
-			return 0.0, errors.New("division by zero")
-		}
-		return lval / rval, nil
+	operations := map[string]func(float64, float64) (float64, error){
+		"+": add,
+		"-": sub,
+		"*": mul,
+		"/": div,
 	}
 
-	return 0.0, errors.New("Unknown operation " + operation)
+	calcOp, ok := operations[operation]
+	if !ok {
+		return 0.0, errors.New("Unknown operation " + operation)
+	}
+
+	return calcOp(lval, rval)
+}
+
+func add(lval, rval float64) (float64, error) {
+	return lval + rval, nil
+}
+
+func sub(lval, rval float64) (float64, error) {
+	return lval - rval, nil
+}
+
+func mul(lval, rval float64) (float64, error) {
+	return lval * rval, nil
+}
+
+func div(lval, rval float64) (float64, error) {
+	if rval == 0 {
+		return 0.0, errors.New("division by zero")
+	}
+	return lval / rval, nil
 }
 
 func (c *Calculator) Calculate(input string) (float64, error) {
